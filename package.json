@@ -1,0 +1,26 @@
+{
+  "name": "nhlbot",
+  "version": "1.0.0",
+  "description": "Discord bot for stats and info on the NHL",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PrattyBee/NHLBot.git"
+  },
+  "author": "Pratyush Kaintura",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PrattyBee/NHLBot/issues"
+  },
+  "homepage": "https://github.com/PrattyBee/NHLBot#readme",
+  "dependencies": {
+    "discord.js": "^14.9.0",
+    "dotenv": "^16.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.39.0"
+  }
+}
