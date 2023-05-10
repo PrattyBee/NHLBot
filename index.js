@@ -1,6 +1,6 @@
 // Require the necessary discord.js classes
-const fs = require("node:fs");
-const path = require("node:path");
+const fs = require("fs");
+const path = require("path");
 const { Client, Collection, Events, GatewayIntentBits } = require("discord.js");
 const { token } = require("./config.json");
 
@@ -8,6 +8,7 @@ const { token } = require("./config.json");
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.commands = new Collection();
+client.cooldowns = new Collection();
 
 const foldersPath = path.join(__dirname, "commands");
 const commandFolders = fs.readdirSync(foldersPath);
@@ -33,7 +34,7 @@ for (const folder of commandFolders) {
 
 const eventsPath = path.join(__dirname, "events");
 const eventFiles = fs
-  .readdir(eventsPath)
+  .readdirSync(eventsPath)
   .filter((file) => file.endsWith(".js"));
 
 for (const file of eventFiles) {
