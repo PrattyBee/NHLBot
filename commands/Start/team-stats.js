@@ -16,12 +16,14 @@ module.exports = {
     teamStats = await getTeamStats(teamName);
     team = teamStats.teams[0];
     previousGame = team.previousGameSchedule.dates[0].games[0].teams;
+    nextGame = team.nextGameSchedule.dates[0].games[0].teams;
     await interaction.reply(
       `
       Team: ${team.name}
 Record: ${team.teamStats[0].splits[0].stat.wins}-${team.teamStats[0].splits[0].stat.losses}-${team.teamStats[0].splits[0].stat.ot}
 Points: ${team.teamStats[0].splits[0].stat.pts}
 Previous Game: ${previousGame.away.team.name} (${previousGame.away.score}-${previousGame.home.score}) ${previousGame.home.team.name} on ${team.previousGameSchedule.dates[0].date}
+Next Game: ${nextGame.away.team.name} at ${nextGame.home.team.name} on ${team.nextGameSchedule.dates[0].date}
       `
     );
   },
