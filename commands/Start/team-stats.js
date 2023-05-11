@@ -22,15 +22,14 @@ module.exports = {
 
     team = teamStats.teams[0];
     previousGame = team.previousGameSchedule.dates[0].games[0].teams;
-    nextGame = team.nextGameSchedule.dates[0].games[0].teams;
+    nextGame = doesNextGameExist(team);
     await interaction.reply(
       `
       Team: ${team.name}
 Record: ${team.teamStats[0].splits[0].stat.wins}-${team.teamStats[0].splits[0].stat.losses}-${team.teamStats[0].splits[0].stat.ot}
 Points: ${team.teamStats[0].splits[0].stat.pts}
 Previous Game: ${previousGame.away.team.name} (${previousGame.away.score}-${previousGame.home.score}) ${previousGame.home.team.name} on ${team.previousGameSchedule.dates[0].date}
-Next Game: ${nextGame.away.team.name} at ${nextGame.home.team.name} on ${team.nextGameSchedule.dates[0].date}
-      `
+${nextGame}      `
     );
   },
 };
@@ -56,7 +55,7 @@ async function getTeamId(teamName) {
     }
   } catch (error) {
     console.error("Error:", error.message);
-    throw new Error("Could not find the team");
+    throw new Error("Could not find team ID");
   }
 }
 
@@ -70,5 +69,15 @@ async function getTeamStats(teamName) {
     return data;
   } catch (error) {
     console.error("Could not get stats for team");
+  }
+}
+
+function doesNextGameExist(team) {
+  try {
+    nextGame = team.nextGameSchedule.dates[0].games[0].teams;
+    nextGame.away.team.name;
+    return `Next Game: ${nextGame.away.team.name} at ${nextGame.home.team.name} on ${team.nextGameSchedule.dates[0].date}`;
+  } catch (error) {
+    return `Next Game: None`;
   }
 }
