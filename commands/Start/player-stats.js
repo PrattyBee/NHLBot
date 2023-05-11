@@ -1,5 +1,40 @@
 const { SlashCommandBuilder } = require("discord.js");
 
+const teams = [
+  "Anaheim Ducks",
+  "Arizona Coyotes",
+  "Boston Bruins",
+  "Buffalo Sabres",
+  "Calgary Flames",
+  "Carolina Hurricanes",
+  "Chicago Blackhawks",
+  "Colorado Avalanche",
+  "Columbus Blue Jackets",
+  "Dallas Stars",
+  "Detroit Red Wings",
+  "Edmonton Oilers",
+  "Florida Panthers",
+  "Los Angeles Kings",
+  "Minnesota Wild",
+  "Montréal Canadiens",
+  "Nashville Predators",
+  "New Jersey Devils",
+  "New York Islanders",
+  "New York Rangers",
+  "Ottawa Senators",
+  "Philadelphia Flyers",
+  "Pittsburgh Penguins",
+  "San Jose Sharks",
+  "Seattle Kraken",
+  "St. Louis Blues",
+  "Tampa Bay Lightning",
+  "Toronto Maple Leafs",
+  "Vancouver Canucks",
+  "Vegas Golden Knights",
+  "Washington Capitals",
+  "Winnipeg Jets",
+];
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("player-stats")
@@ -12,6 +47,63 @@ module.exports = {
     }),
 
   async execute(interaction) {
-    await interaction.reply("Command is not avaliable");
+    await interaction.deferReply();
+    playerID = await findPlayerID("Jake Muzzin");
+    await wait(4000);
+    await interaction.reply(`player ID is: ${playerID}`);
   },
 };
+
+async function findPlayerID(playername) {
+  for (let i = 0; i < teams.length; i++) {
+    const teamID = await getTeamId(teams[i]);
+    const apiUrl = `https://statsapi.web.nhl.com/api/v1/teams/${teamID}?expand=team.roster`;
+
+    const response = await fetch(apiUrl);
+    const data = await response.json(response);
+
+    roster = data.teams[0].roster.roster;
+
+    for (let j = 0; j < roster.length; j++) {
+      person = roster[j].person;
+      if (person.fullName.toLowerCase() == playername.toLowerCase()) {
+        return person.id;
+      }
+    }
+  }
+  console.log("Could not find player's id");
+}
+
+async function getTeamId(teamName) {
+  const apiUrl = "https://statsapi.web.nhl.com/api/v1/teams";
+
+  try {
+    // Make API call to retrieve all teams
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+
+    // Find the team with the matching name
+    const team = data.teams.find(
+      (t) => t.name.toLowerCase() === teamName.toLowerCase()
+    );
+
+    if (team) {
+      return team.id;
+    } else {
+      console.log("Team not found");
+      throw new Error("Could not find the team");
+    }
+  } catch (error) {
+    console.error("Error:", error.message);
+    throw new Error("Could not find team ID");
+  }
+}
+
+async function testFunction() {
+  apiUrl = "https://statsapi.web.nhl.com/api/v1/teams/10?expand=team.roster";
+
+  const response = await fetch(apiUrl);
+  const data = await response.json();
+
+  console.log(data.teams[0].roster.roster[0].person.fullName);
+}
