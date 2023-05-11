@@ -3,11 +3,11 @@ const { SlashCommandBuilder } = require("discord.js");
 module.exports = {
   cooldown: 5,
   data: new SlashCommandBuilder()
-    .setName("team-stats")
+    .setName("team")
     .setDescription("Gets the team's stats from this season.")
     .addStringOption((option) => {
       return option
-        .setName("team")
+        .setName("team-name")
         .setDescription("Enter the team's name")
         .setRequired(true); // Optionally, set the option as required
     }),
