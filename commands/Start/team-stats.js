@@ -12,14 +12,14 @@ module.exports = {
         .setRequired(true); // Optionally, set the option as required
     }),
   async execute(interaction) {
+    teamName = interaction.options.getString("team");
     try {
-      teamName = interaction.options.getString("team");
+      teamStats = await getTeamStats(teamName);
     } catch (error) {
-      await interaction.reply(`${teamName} does not exist`);
+      await interaction.reply(`Could not get stats for ${teamName}`);
       return;
     }
 
-    teamStats = await getTeamStats(teamName);
     team = teamStats.teams[0];
     previousGame = team.previousGameSchedule.dates[0].games[0].teams;
     nextGame = team.nextGameSchedule.dates[0].games[0].teams;
@@ -51,11 +51,12 @@ async function getTeamId(teamName) {
     if (team) {
       return team.id;
     } else {
-      throw new Error("Team not found.");
+      console.log("Team not found");
+      throw new Error("Could not find the team");
     }
   } catch (error) {
     console.error("Error:", error.message);
-    // Handle error appropriately
+    throw new Error("Could not find the team");
   }
 }
 
@@ -68,6 +69,6 @@ async function getTeamStats(teamName) {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error: Could not get stats for team");
+    console.error("Could not get stats for team");
   }
 }
