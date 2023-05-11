@@ -12,7 +12,13 @@ module.exports = {
         .setRequired(true); // Optionally, set the option as required
     }),
   async execute(interaction) {
-    teamName = interaction.options.getString("team");
+    try {
+      teamName = interaction.options.getString("team");
+    } catch (error) {
+      await interaction.reply(`${teamName} does not exist`);
+      return;
+    }
+
     teamStats = await getTeamStats(teamName);
     team = teamStats.teams[0];
     previousGame = team.previousGameSchedule.dates[0].games[0].teams;
