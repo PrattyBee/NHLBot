@@ -21,16 +21,8 @@ module.exports = {
     }
 
     team = teamStats.teams[0];
-    previousGame = team.previousGameSchedule.dates[0].games[0].teams;
-    nextGame = doesNextGameExist(team);
-    await interaction.reply(
-      `
-      Team: ${team.name}
-Record: ${team.teamStats[0].splits[0].stat.wins}-${team.teamStats[0].splits[0].stat.losses}-${team.teamStats[0].splits[0].stat.ot}
-Points: ${team.teamStats[0].splits[0].stat.pts}
-Previous Game: ${previousGame.away.team.name} (${previousGame.away.score}-${previousGame.home.score}) ${previousGame.home.team.name} on ${team.previousGameSchedule.dates[0].date}
-${nextGame}      `
-    );
+    message = getTeamStatsMessage(team);
+    await interaction.reply(message);
   },
 };
 
@@ -80,4 +72,16 @@ function doesNextGameExist(team) {
   } catch (error) {
     return `Next Game: None`;
   }
+}
+
+function getTeamStatsMessage(team) {
+  previousGame = team.previousGameSchedule.dates[0].games[0].teams;
+  nextGame = doesNextGameExist(team);
+  return `
+Team: ${team.name}
+Record: ${team.teamStats[0].splits[0].stat.wins}-${team.teamStats[0].splits[0].stat.losses}-${team.teamStats[0].splits[0].stat.ot}
+Points: ${team.teamStats[0].splits[0].stat.pts}
+Previous Game: ${previousGame.away.team.name} (${previousGame.away.score}-${previousGame.home.score}) ${previousGame.home.team.name} on ${team.previousGameSchedule.dates[0].date}
+${nextGame}      
+`;
 }
