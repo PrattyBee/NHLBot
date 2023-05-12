@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
+const { data } = require("./team");
 
 const teams = [
   "Anaheim Ducks",
@@ -55,8 +56,8 @@ module.exports = {
       await interaction.editReply("Could not find player");
       return;
     }
-
-    await interaction.editReply(`player ID is: ${playerID}`);
+    playerStats = await getPlayerStats(playerID);
+    await interaction.editReply(playerStats);
   },
 };
 
@@ -106,11 +107,38 @@ async function getTeamId(teamName) {
   }
 }
 
-async function testFunction() {
-  apiUrl = "https://statsapi.web.nhl.com/api/v1/teams/10?expand=team.roster";
+async function getPlayerStats(playerID) {
+  apiUrl = `https://statsapi.web.nhl.com/api/v1/people/${playerID}/stats?stats=yearByYear`;
 
-  const response = await fetch(apiUrl);
-  const data = await response.json();
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    seasonStats = data.stats[0].splits;
+    console.log(data.stats[0].splits[16]);
+  } catch (error) {
+    throw new Error("Could not get player's stats");
+  }
 
-  console.log(data.teams[0].roster.roster[0].person.fullName);
+  message = `Season       GP     G       A       P       +/-     PIM    GWG   OTG    PPG   PPP     SOG       S%       FO%      H      B\n\n`;
+  for (let i = 0; i < seasonStats.length; i++) {
+    if (seasonStats[i].league.name != "National Hockey League") {
+      continue;
+    }
+    stats = seasonStats[i].stat;
+    statsString = `${seasonStats[i].season}     ${stats.games}     ${
+      stats.goals
+    }      ${stats.assists}      ${stats.goals + stats.assists}      ${
+      stats.plusMinus
+    }      ${stats.pim}      ${stats.gameWinningGoals}     ${
+      stats.overTimeGoals
+    }      ${stats.powerPlayGoals}     ${stats.powerPlayPoints}      ${
+      stats.shots
+    }      ${stats.shotPct}      ${stats.faceOffPct}     ${stats.hits}     ${
+      stats.blocked
+    }\n\n`;
+
+    message = message + statsString;
+  }
+  console.log(message);
+  return message;
 }
