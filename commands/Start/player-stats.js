@@ -114,31 +114,47 @@ async function getPlayerStats(playerID) {
     const response = await fetch(apiUrl);
     const data = await response.json();
     seasonStats = data.stats[0].splits;
-    console.log(data.stats[0].splits[16]);
   } catch (error) {
     throw new Error("Could not get player's stats");
   }
 
-  message = `Season       GP     G       A       P       +/-     PIM    GWG   OTG    PPG   PPP     SOG       S%       FO%      H      B\n\n`;
+  message = `   Season           GP        G        A          P       +/-     PIM    GWG   OTG    PPG   PPP     SOG       S%       FO%      H      B\n\n`;
   for (let i = 0; i < seasonStats.length; i++) {
     if (seasonStats[i].league.name != "National Hockey League") {
       continue;
     }
     stats = seasonStats[i].stat;
-    statsString = `${seasonStats[i].season}     ${stats.games}     ${
-      stats.goals
-    }      ${stats.assists}      ${stats.goals + stats.assists}      ${
-      stats.plusMinus
-    }      ${stats.pim}      ${stats.gameWinningGoals}     ${
-      stats.overTimeGoals
-    }      ${stats.powerPlayGoals}     ${stats.powerPlayPoints}      ${
-      stats.shots
-    }      ${stats.shotPct}      ${stats.faceOffPct}     ${stats.hits}     ${
-      stats.blocked
-    }\n\n`;
+    statsString = `${seasonStats[i].season.padStart(10, " ")}     ${stats.games
+      .toString()
+      .padStart(4, " ")}     ${stats.goals
+      .toString()
+      .padStart(4, " ")}      ${stats.assists
+      .toString()
+      .padStart(4, " ")}      ${(stats.goals + stats.assists)
+      .toString()
+      .padStart(4, " ")}      ${stats.plusMinus
+      .toString()
+      .padStart(4, " ")}      ${stats.pim
+      .toString()
+      .padStart(4, " ")}      ${stats.gameWinningGoals
+      .toString()
+      .padStart(4, " ")}     ${stats.overTimeGoals
+      .toString()
+      .padStart(4, " ")}      ${stats.powerPlayGoals
+      .toString()
+      .padStart(4, " ")}     ${stats.powerPlayPoints
+      .toString()
+      .padStart(4, " ")}      ${stats.shots
+      .toString()
+      .padStart(4, " ")}      ${stats.shotPct
+      .toString()
+      .padStart(4, " ")}      ${stats.faceOffPct
+      .toString()
+      .padStart(4, " ")}     ${stats.hits
+      .toString()
+      .padStart(4, " ")}     ${stats.blocked.toString().padStart(4, " ")}\n\n`;
 
     message = message + statsString;
   }
-  console.log(message);
   return message;
 }
