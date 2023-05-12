@@ -48,9 +48,15 @@ module.exports = {
 
   async execute(interaction) {
     await interaction.deferReply();
-    playerID = await findPlayerID("Jake Muzzin");
-    await wait(4000);
-    await interaction.reply(`player ID is: ${playerID}`);
+    playername = interaction.options.getString("player");
+    try {
+      playerID = await findPlayerID(playername);
+    } catch (error) {
+      await interaction.editReply("Could not find player");
+      return;
+    }
+
+    await interaction.editReply(`player ID is: ${playerID}`);
   },
 };
 
@@ -72,6 +78,7 @@ async function findPlayerID(playername) {
     }
   }
   console.log("Could not find player's id");
+  throw new Error("Could not find player");
 }
 
 async function getTeamId(teamName) {
